@@ -1,18 +1,26 @@
 import { render, screen } from "@testing-library/react";
 import { ChatInterface } from "./ChatInterface";
 
+jest.mock("next/link", () => ({
+  __esModule: true,
+  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  ),
+}));
+
 describe("ChatInterface", () => {
-  it("renders without crashing", () => {
+  it("renders the header title", () => {
     render(<ChatInterface />);
+    expect(screen.getByText("Chatbot System Design")).toBeInTheDocument();
   });
 
-  it("applies custom className", () => {
-    const { container } = render(<ChatInterface className="test-class" />);
-    expect(container.firstChild).toHaveClass("test-class");
+  it("renders a link to the design page", () => {
+    render(<ChatInterface />);
+    expect(screen.getByRole("link", { name: /system design/i })).toHaveAttribute("href", "/design");
   });
 
-  it("renders children", () => {
-    render(<ChatInterface><span>content</span></ChatInterface>);
-    expect(screen.getByText("content")).toBeInTheDocument();
+  it("renders the chat input", () => {
+    render(<ChatInterface />);
+    expect(screen.getByRole("textbox")).toBeInTheDocument();
   });
 });

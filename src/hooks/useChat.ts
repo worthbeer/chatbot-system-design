@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import type { Message } from "@types/index";
+import type { Message } from "@t/index";
 
 type UseChatReturn = {
   messages: Message[];

@@ -1,18 +1,27 @@
 import { render, screen } from "@testing-library/react";
 import { ChatWindow } from "./ChatWindow";
 
+const noMessages = { messages: [], streaming: false };
+
 describe("ChatWindow", () => {
-  it("renders without crashing", () => {
-    render(<ChatWindow />);
+  it("renders the empty state prompt when there are no messages", () => {
+    render(<ChatWindow {...noMessages} />);
+    expect(screen.getByText(/ask me anything/i)).toBeInTheDocument();
   });
 
-  it("applies custom className", () => {
-    const { container } = render(<ChatWindow className="test-class" />);
-    expect(container.firstChild).toHaveClass("test-class");
+  it("renders user and assistant messages", () => {
+    const messages = [
+      { role: "user" as const, content: "Hello" },
+      { role: "assistant" as const, content: "Hi there" },
+    ];
+    render(<ChatWindow messages={messages} streaming={false} />);
+    expect(screen.getByText("Hello")).toBeInTheDocument();
+    expect(screen.getByText("Hi there")).toBeInTheDocument();
   });
 
-  it("renders children", () => {
-    render(<ChatWindow><span>content</span></ChatWindow>);
-    expect(screen.getByText("content")).toBeInTheDocument();
+  it("shows a typing indicator when streaming with the last message from user", () => {
+    const messages = [{ role: "user" as const, content: "Hello" }];
+    const { container } = render(<ChatWindow messages={messages} streaming={true} />);
+    expect(container.querySelector(".animate-bounce")).toBeInTheDocument();
   });
 });
