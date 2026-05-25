@@ -33,17 +33,16 @@ When asked about your architecture, be specific and honest about tradeoffs — n
 
 export async function POST(request: Request) {
   let messages: { role: string; content: string }[];
-  let userApiKey: string | undefined;
 
   try {
-    ({ messages, apiKey: userApiKey } = await request.json());
+    ({ messages } = await request.json());
   } catch {
     return new Response("Invalid request body", { status: 400 });
   }
 
-  const apiKey = userApiKey || process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return new Response("No API key provided. Add your Anthropic API key to get started.", { status: 401 });
+    return new Response("ANTHROPIC_API_KEY is not configured. See the setup instructions.", { status: 401 });
   }
 
   if (!Array.isArray(messages) || messages.length === 0) {

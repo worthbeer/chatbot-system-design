@@ -9,7 +9,7 @@ type UseChatReturn = {
   abort: () => void;
 };
 
-export function useChat(apiKey?: string | null): UseChatReturn {
+export function useChat(): UseChatReturn {
   const [messages, setMessages] = useState<Message[]>([]);
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +31,7 @@ export function useChat(apiKey?: string | null): UseChatReturn {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next, ...(apiKey && { apiKey }) }),
+        body: JSON.stringify({ messages: next }),
         signal: abortRef.current.signal,
       });
 

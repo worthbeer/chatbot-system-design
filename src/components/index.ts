@@ -3,4 +3,4 @@ export * from "./ChatMessage";
 export * from "./ChatWindow";
 export * from "./ChatInput";
 export * from "./ChatInterface";
-export * from "./ApiKeyGate";
+export * from "./SetupInstructions";
