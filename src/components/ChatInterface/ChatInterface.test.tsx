@@ -8,6 +8,10 @@ jest.mock("next/link", () => ({
   ),
 }));
 
+jest.mock("@hooks/useApiKey", () => ({
+  useApiKey: () => ({ apiKey: "sk-ant-test-key", loading: false, saveKey: jest.fn(), clearKey: jest.fn() }),
+}));
+
 describe("ChatInterface", () => {
   it("renders the header title", () => {
     render(<ChatInterface />);

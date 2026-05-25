@@ -1,7 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic();
-
 const SYSTEM_PROMPT = `You are a Next.js chatbot built to demonstrate system design thinking. You can discuss your own architecture in detail.
 
 Here is exactly how you are built:
@@ -34,20 +32,25 @@ This system prompt is the source of truth for your self-knowledge. The /design r
 When asked about your architecture, be specific and honest about tradeoffs — not just the choices made, but what was given up. For questions outside your architecture, answer helpfully and concisely.`;
 
 export async function POST(request: Request) {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return new Response("ANTHROPIC_API_KEY is not configured", { status: 500 });
-  }
-
   let messages: { role: string; content: string }[];
+  let userApiKey: string | undefined;
+
   try {
-    ({ messages } = await request.json());
+    ({ messages, apiKey: userApiKey } = await request.json());
   } catch {
     return new Response("Invalid request body", { status: 400 });
+  }
+
+  const apiKey = userApiKey || process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return new Response("No API key provided. Add your Anthropic API key to get started.", { status: 401 });
   }
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return new Response("messages must be a non-empty array", { status: 400 });
   }
+
+  const client = new Anthropic({ apiKey });
 
   const stream = new ReadableStream({
     async start(controller) {
